@@ -1,59 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Blog/CMS API (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful blog/content management API built with Laravel and Eloquent ORM, featuring categories, tags (many-to-many), comments, pagination, and ownership-based authorization.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Full CRUD for posts, categories, tags, and comments
+- Many-to-many relationship between posts and tags
+- Nested comments under posts (`/posts/{id}/comments`)
+- Public read access, authenticated write access
+- Ownership-based authorization — users can only edit/delete their own posts and comments
+- Auto-generated URL-friendly slugs for posts, categories, and tags
+- Paginated post listings
+- SQLite for local development, PostgreSQL in production
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP** 8.2
+- **Laravel** 12
+- **Eloquent ORM**
+- **PostgreSQL** (production) / **SQLite** (local)
+- **Laravel Sanctum** (API authentication)
 
-## Learning Laravel
+## Database Schema
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**User** — id, name, email, password
+**Category** — id, name, slug
+**Tag** — id, name, slug
+**Post** — id, title, slug, body, published, user_id (FK), category_id (FK, nullable)
+**Comment** — id, body, user_id (FK), post_id (FK)
+**post_tag** (pivot) — post_id, tag_id
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Relationships:
+- A `User` has many `Post`s and `Comment`s
+- A `Post` belongs to a `User` and a `Category`, has many `Comment`s, and belongs to many `Tag`s
+- A `Tag` belongs to many `Post`s
 
-## Laravel Sponsors
+## API Endpoints
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/api/register` | — | Register a new user |
+| POST | `/api/login` | — | Log in |
+| POST | `/api/logout` | Required | Log out |
+| GET | `/api/categories` | — | List categories |
+| GET | `/api/categories/{id}` | — | Show category with posts |
+| POST | `/api/categories` | Required | Create category |
+| PUT | `/api/categories/{id}` | Required | Update category |
+| DELETE | `/api/categories/{id}` | Required | Delete category |
+| GET | `/api/tags` | — | List tags |
+| GET | `/api/tags/{id}` | — | Show tag with posts |
+| POST | `/api/tags` | Required | Create tag |
+| PUT | `/api/tags/{id}` | Required | Update tag |
+| DELETE | `/api/tags/{id}` | Required | Delete tag |
+| GET | `/api/posts` | — | List published posts (paginated) |
+| GET | `/api/posts/{id}` | — | Show post with author, category, tags, comments |
+| POST | `/api/posts` | Required | Create post (author auto-set) |
+| PUT | `/api/posts/{id}` | Required + Owner | Update own post |
+| DELETE | `/api/posts/{id}` | Required + Owner | Delete own post |
+| POST | `/api/posts/{postId}/comments` | Required | Add comment to a post |
+| DELETE | `/api/comments/{id}` | Required + Owner | Delete own comment |
 
-### Premium Partners
+### Example: Create a post with tags
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+curl -X POST https://blog-cms-api-j8mx.onrender.com/api/posts \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"title": "My Post", "body": "Content here", "published": true, "category_id": 1, "tags": [1, 2]}'
+```
 
-## Contributing
+## Getting Started
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prerequisites
+- PHP 8.2+
+- Composer
 
-## Code of Conduct
+### Installation
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone https://github.com/1-dara/blog-cms-api.git
+cd blog-cms-api
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+php artisan serve
+```
 
-## Security Vulnerabilities
+The API will be available at `http://127.0.0.1:8000`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Live Demo
 
-## License
+- **API Base URL:** https://blog-cms-api-j8mx.onrender.com
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Note: hosted on Render's free tier — the first request after inactivity may take 30-60 seconds while the server spins up.
+
+## Roadmap
+
+- [ ] Swagger/OpenAPI interactive documentation
+- [ ] Search/filter posts by category or tag
+- [ ] Rich text or Markdown support for post bodies
+
+## About
+
+Built as a second Laravel project, extending on an earlier task manager API by introducing many-to-many relationships, nested resources, and pagination.
