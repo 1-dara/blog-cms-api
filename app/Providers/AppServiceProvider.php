@@ -17,5 +17,8 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
+        if (!defined('L5_SWAGGER_CONST_HOST')) {
+            define('L5_SWAGGER_CONST_HOST', config('app.url'));
+        }
     }
 }
