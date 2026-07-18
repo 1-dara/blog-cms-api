@@ -2,6 +2,8 @@
 
 A RESTful blog/content management API built with Laravel and Eloquent ORM, featuring categories, tags (many-to-many), comments, pagination, and ownership-based authorization.
 
+- **API URL:** - https://blog-cms-api-j8mx.onrender.com 
+
 ## Features
 
 - Full CRUD for posts, categories, tags, and comments
@@ -93,7 +95,7 @@ The API will be available at `http://127.0.0.1:8000`.
 
 ## Live Demo
 
-- **API Base URL:** https://blog-cms-api-j8mx.onrender.com
+- **API URL:** https://blog-cms-api-j8mx.onrender.com
 
 Note: hosted on Render's free tier — the first request after inactivity may take 30-60 seconds while the server spins up.
 
