@@ -109,4 +109,4 @@ Note: hosted on Render's free tier — the first request after inactivity may ta
 
 ## About
 
-Built as a second Laravel project, extending on an earlier task manager API by introducing many-to-many relationships, nested resources, and pagination.
+Built with Laravel, extending on an earlier task manager API by introducing many-to-many relationships, nested resources, and pagination.
