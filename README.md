@@ -1,3 +1,5 @@
+![Tests](https://github.com/1-dara/blog-cms-api/actions/workflows/tests.yml/badge.svg)
+
 # Blog/CMS API (Laravel)
 
 A RESTful blog/content management API built with Laravel and Eloquent ORM, featuring categories, tags (many-to-many), comments, pagination, and ownership-based authorization.
